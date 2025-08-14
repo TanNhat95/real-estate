@@ -5,9 +5,13 @@ import Navbar from "@/components/Navbar";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div>
+    <div className="h-full">
       <Navbar />
-      <main className={`flex flex-col h-full w-full [pt-${NAVBAR_HEIGHT}rem]`}>
+      <main
+        className={`flex flex-col h-full w-full`}
+        //Tailwind JIT does not recognize values in template constants
+        style={{ paddingTop: `${NAVBAR_HEIGHT}rem` }}
+      >
         {children}
       </main>
     </div>
