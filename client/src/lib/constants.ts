@@ -134,3 +134,23 @@ export const testUsers = {
   },
   managerRole: "manager",
 };
+
+//Mock features section
+
+export const featuresSection = [0, 1, 2];
+
+export const titleFeaturesSection = [
+  "Trustworthy and Verified Listings",
+  "Browse Rental Listings with Ease",
+  "Simplify Your Rental Search with Advanced",
+];
+
+export const descriptionFeaturesSection = [
+  "Discover the best rental options with user reviews and ratings.",
+  "Get access to user reviews and ratings for a better understanding of rental options.",
+  "Find trustworthy and verified rental listings to ensure a hassle-free experience.",
+];
+
+export const textFeaturesSection = ["Explore", "Search", "Discover"];
+
+export const hrefFeaturesSection = ["/explore", "/search", "/discover"];
