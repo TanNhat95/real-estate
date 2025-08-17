@@ -20,11 +20,91 @@ Amplify.configure({
   },
 });
 
+const formFields = {
+  signIn: {
+    username: {
+      label: "Email",
+      placeholder: "Enter your email",
+      isRequired: true,
+    },
+    password: {
+      label: "Password",
+      placeholder: "Enter your password",
+      isRequired: true,
+    },
+  },
+  signUp: {
+    username: {
+      order: 1,
+      label: "Username",
+      placeholder: "Enter your username",
+      isRequired: true,
+    },
+    email: {
+      order: 2,
+      label: "Email",
+      placeholder: "Enter your email",
+      isRequired: true,
+    },
+    password: {
+      order: 3,
+      label: "Password",
+      placeholder: "Enter your password",
+      isRequired: true,
+    },
+    confirm_password: {
+      order: 4,
+      label: "Confirm Password",
+      placeholder: "Confirm your password",
+      isRequired: true,
+    },
+  },
+};
+
+const components = {
+  SignIn: {
+    Header() {
+      return (
+        <View className="mt-4 mb-7">
+          <Heading level={3} className="!text-2xl !font-bold">
+            MIRA
+            <span className="text-secondary-500 font-light hover:!text-primary-300">
+              CLE
+            </span>
+          </Heading>
+          <p className="text-muted-foreground mt-2">
+            <span className="font-bold">Welcome!</span> Please sign in to your
+            account.
+          </p>
+        </View>
+      );
+    },
+    Footer() {
+      const { toSignUp } = useAuthenticator();
+      return (
+        <View className="text-center mt-4">
+          <p className="text-muted-foreground">
+            Don&apos;t have an account?{" "}
+            <button
+              onClick={toSignUp}
+              className="text-primary hover:underline bg-transparent border-none p-0"
+            >
+              Sign up here
+            </button>
+          </p>
+        </View>
+      );
+    },
+  },
+};
+
 const Auth = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuthenticator((context) => [context.user]);
   return (
     <div className="h-full">
-      <Authenticator>{() => <>{children}</>}</Authenticator>
+      <Authenticator formFields={formFields} components={components}>
+        {() => <>{children}</>}
+      </Authenticator>
     </div>
   );
 };
