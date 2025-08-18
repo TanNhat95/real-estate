@@ -161,7 +161,11 @@ const Auth = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="h-full">
-      <Authenticator formFields={formFields} components={components}>
+      <Authenticator
+        initialState={pathname.includes("signup") ? "signUp" : "signIn"}
+        components={components}
+        formFields={formFields}
+      >
         {() => <>{children}</>}
       </Authenticator>
     </div>
