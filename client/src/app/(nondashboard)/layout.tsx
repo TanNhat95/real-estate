@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 
 import { NAVBAR_HEIGHT } from "@/lib/constants";
