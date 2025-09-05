@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
-import { Manager, Property, Tenant } from "@/types/prismaTypes";
+import { Manager, Property, Tenant, Application } from "@/types/prismaTypes";
 
 import { cleanParams, createNewUserInDatabase, withToast } from "@/lib/utils";
 import { FiltersState } from "@/state";
@@ -19,7 +19,13 @@ export const api = createApi({
     },
   }),
   reducerPath: "api",
-  tagTypes: ["Managers", "Tenants", "Properties", "PropertyDetails"],
+  tagTypes: [
+    "Managers",
+    "Tenants",
+    "Properties",
+    "PropertyDetails",
+    "Applications",
+  ],
   endpoints: (build) => ({
     getAuthUser: build.query<User, void>({
       queryFn: async (_, _queryApi, _extraoptions, fetchWithBQ) => {
@@ -196,6 +202,21 @@ export const api = createApi({
         });
       },
     }),
+
+    createApplication: build.mutation<Application, Partial<Application>>({
+      query: (body) => ({
+        url: `applications`,
+        method: "POST",
+        body: body,
+      }),
+      invalidatesTags: ["Applications"],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          success: "Application created successfully!",
+          error: "Failed to create applications.",
+        });
+      },
+    }),
   }),
 });
 
@@ -208,4 +229,5 @@ export const {
   useGetPropertyQuery,
   useAddFavoritePropertyMutation,
   useRemoveFavoritePropertyMutation,
+  useCreateApplicationMutation,
 } = api;
