@@ -1,7 +1,14 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 import { fetchAuthSession, getCurrentUser } from "aws-amplify/auth";
-import { Manager, Property, Tenant, Application } from "@/types/prismaTypes";
+import {
+  Manager,
+  Property,
+  Tenant,
+  Application,
+  Lease,
+  Payment,
+} from "@/types/prismaTypes";
 
 import { cleanParams, createNewUserInDatabase, withToast } from "@/lib/utils";
 import { FiltersState } from "@/state";
@@ -25,6 +32,8 @@ export const api = createApi({
     "Properties",
     "PropertyDetails",
     "Applications",
+    "Leases",
+    "Payments",
   ],
   endpoints: (build) => ({
     getAuthUser: build.query<User, void>({
@@ -93,6 +102,22 @@ export const api = createApi({
         await withToast(queryFulfilled, {
           success: "Settings updated successfully!",
           error: "Failed to update settings.",
+        });
+      },
+    }),
+
+    getCurrentResidences: build.query<Property[], string>({
+      query: (cognitoId) => `tenants/${cognitoId}/current-residences`,
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({ type: "Properties" as const, id })),
+              { type: "Properties", id: "LIST" },
+            ]
+          : [{ type: "Properties", id: "LIST" }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to fetch current residences.",
         });
       },
     }),
@@ -217,12 +242,34 @@ export const api = createApi({
         });
       },
     }),
+
+    // lease related enpoints
+    getLeases: build.query<Lease[], number>({
+      query: () => "leases",
+      providesTags: ["Leases"],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to fetch leases.",
+        });
+      },
+    }),
+
+    getPayments: build.query<Payment[], number>({
+      query: (leaseId) => `leases/${leaseId}/payments`,
+      providesTags: ["Payments"],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to fetch payment info.",
+        });
+      },
+    }),
   }),
 });
 
 export const {
   useGetAuthUserQuery,
   useGetTenantQuery,
+  useGetCurrentResidencesQuery,
   useUpdateTenantSettingsMutation,
   useUpdateManagerSettingsMutation,
   useGetPropertiesQuery,
@@ -230,4 +277,6 @@ export const {
   useAddFavoritePropertyMutation,
   useRemoveFavoritePropertyMutation,
   useCreateApplicationMutation,
+  useGetLeasesQuery,
+  useGetPaymentsQuery,
 } = api;
