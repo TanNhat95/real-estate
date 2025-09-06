@@ -122,6 +122,23 @@ export const api = createApi({
       },
     }),
 
+    // manager related endpoints
+    getManagerProperties: build.query<Property[], string>({
+      query: (cognitoId) => `managers/${cognitoId}/properties`,
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({ type: "Properties" as const, id })),
+              { type: "Properties", id: "LIST" },
+            ]
+          : [{ type: "Properties", id: "LIST" }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to load manager profile.",
+        });
+      },
+    }),
+
     updateManagerSettings: build.mutation<
       Manager,
       { cognitoId: string } & Partial<Manager>
@@ -254,6 +271,16 @@ export const api = createApi({
       },
     }),
 
+    getPropertyLeases: build.query<Lease[], number>({
+      query: (propertyId) => `properties/${propertyId}/leases`,
+      providesTags: ["Leases"],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to fetch property leases.",
+        });
+      },
+    }),
+
     getPayments: build.query<Payment[], number>({
       query: (leaseId) => `leases/${leaseId}/payments`,
       providesTags: ["Payments"],
@@ -272,11 +299,13 @@ export const {
   useGetCurrentResidencesQuery,
   useUpdateTenantSettingsMutation,
   useUpdateManagerSettingsMutation,
+  useGetManagerPropertiesQuery,
   useGetPropertiesQuery,
   useGetPropertyQuery,
   useAddFavoritePropertyMutation,
   useRemoveFavoritePropertyMutation,
   useCreateApplicationMutation,
   useGetLeasesQuery,
+  useGetPropertyLeasesQuery,
   useGetPaymentsQuery,
 } = api;
