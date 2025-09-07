@@ -1,14 +1,16 @@
 "use client";
 
-import Card from "@/components/Card";
-import Header from "@/components/Header";
-import Loading from "@/components/Loading";
+import React from "react";
+
 import {
   useGetAuthUserQuery,
   useGetCurrentResidencesQuery,
   useGetTenantQuery,
 } from "@/state/api";
-import React from "react";
+
+import Card from "@/components/Card";
+import Header from "@/components/Header";
+import Loading from "@/components/Loading";
 
 const Residences = () => {
   const { data: authUser } = useGetAuthUserQuery();

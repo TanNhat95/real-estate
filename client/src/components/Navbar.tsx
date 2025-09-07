@@ -32,7 +32,7 @@ const Navbar = () => {
 
   const handleSignOut = async () => {
     await signOut();
-    window.location.href = "/";
+    window.location.href = "/landing";
   };
 
   return (
@@ -50,7 +50,7 @@ const Navbar = () => {
             </div>
           )}
           <Link
-            href="/"
+            href="/landing"
             className="cursor-pointer hover:!text-primary-300"
             scroll={false}
           >
