@@ -13,6 +13,8 @@ import {
 } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 
+import Loading from "@/components/Loading";
+
 //https://ui.docs.amplify.aws/react/connected-components/authenticator/customization
 Amplify.configure({
   Auth: {
@@ -150,9 +152,16 @@ const Auth = ({ children }: { children: React.ReactNode }) => {
   // Redirect authenticated users away from auth pages
   useEffect(() => {
     if (user && isAuthPage) {
-      router.push("/");
+      router.push(
+        pathname === "/signin" || pathname === "/signup" ? "/landing" : pathname
+      );
     }
-  }, [user, isAuthPage, router]);
+  }, [user, isAuthPage, router, pathname]);
+
+  // Show loading indicator while checking authentication status and fix 404 pages
+  if (user && isAuthPage) {
+    return <Loading />;
+  }
 
   // Allow access to public pages without authentication
   if (!isAuthPage && !isDashboardPage) {
