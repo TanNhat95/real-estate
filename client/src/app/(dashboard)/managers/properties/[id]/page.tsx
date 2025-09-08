@@ -6,11 +6,7 @@ import { useParams } from "next/navigation";
 import React from "react";
 import { ArrowDownToLine, ArrowLeft, Check, Download } from "lucide-react";
 
-import {
-  useGetPaymentsQuery,
-  useGetPropertyLeasesQuery,
-  useGetPropertyQuery,
-} from "@/state/api";
+import { useGetPropertyLeasesQuery, useGetPropertyQuery } from "@/state/api";
 
 import Header from "@/components/Header";
 import Loading from "@/components/Loading";
@@ -23,6 +19,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { Lease, Payment } from "@/types/prismaTypes";
+
 const PropertyManagers = () => {
   const { id } = useParams();
   const propertyId = Number(id);
@@ -31,16 +29,14 @@ const PropertyManagers = () => {
     useGetPropertyQuery(propertyId);
   const { data: leases, isLoading: leasesLoading } =
     useGetPropertyLeasesQuery(propertyId);
-  const { data: payments, isLoading: paymentsLoading } =
-    useGetPaymentsQuery(propertyId);
 
-  if (propertyLoading || leasesLoading || paymentsLoading) return <Loading />;
+  if (propertyLoading || leasesLoading) return <Loading />;
 
-  const getCurrentMonthPaymentStatus = (leaseId: number) => {
+  const getCurrentMonthPaymentStatus = (lease: Lease) => {
     const currentDate = new Date();
-    const currentMonthPayment = payments?.find(
-      (payment) =>
-        payment.leaseId === leaseId &&
+    const currentMonthPayment = lease.payments.find(
+      (payment: Payment) =>
+        payment.leaseId === lease.id &&
         new Date(payment.dueDate).getMonth() === currentDate.getMonth() &&
         new Date(payment.dueDate).getFullYear() === currentDate.getFullYear()
     );
@@ -128,15 +124,15 @@ const PropertyManagers = () => {
                     <TableCell>
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                          getCurrentMonthPaymentStatus(lease.id) === "Paid"
+                          getCurrentMonthPaymentStatus(lease) === "Paid"
                             ? "bg-green-100 text-green-800 border-green-300"
                             : "bg-red-100 text-red-800 border-red-300"
                         }`}
                       >
-                        {getCurrentMonthPaymentStatus(lease.id) === "Paid" && (
+                        {getCurrentMonthPaymentStatus(lease) === "Paid" && (
                           <Check className="w-4 h-4 inline-block mr-1" />
                         )}
-                        {getCurrentMonthPaymentStatus(lease.id)}
+                        {getCurrentMonthPaymentStatus(lease)}
                       </span>
                     </TableCell>
                     <TableCell>{lease.tenant.phoneNumber}</TableCell>

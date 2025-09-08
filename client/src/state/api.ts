@@ -13,6 +13,11 @@ import {
 import { cleanParams, createNewUserInDatabase, withToast } from "@/lib/utils";
 import { FiltersState } from "@/state";
 
+type LeaseWithRelations = Lease & {
+  tenant: Tenant;
+  payments: Payment[];
+};
+
 export const api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
@@ -331,7 +336,7 @@ export const api = createApi({
       },
     }),
 
-    getPropertyLeases: build.query<Lease[], number>({
+    getPropertyLeases: build.query<LeaseWithRelations[], number>({
       query: (propertyId) => `properties/${propertyId}/leases`,
       providesTags: ["Leases"],
       async onQueryStarted(_, { queryFulfilled }) {

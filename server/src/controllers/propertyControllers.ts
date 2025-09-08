@@ -304,3 +304,22 @@ export const createProperty = async (
       .json({ message: `Error creating property: ${err.message}` });
   }
 };
+
+export const getPropertyLeases = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const leases = await prisma.lease.findMany({
+      where: { propertyId: Number(id) },
+      include: {
+        tenant: true,
+        payments: true,
+      },
+    });
+
+    res.json(leases);
+  } catch (error) {
+    console.error("Error fetching property leases:", error);
+    res.status(500).json({ error: "Failed to fetch leases for property" });
+  }
+};

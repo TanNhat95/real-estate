@@ -16,8 +16,6 @@ export const getManager = async (
       where: { cognitoId },
     });
 
-    console.log("Manager retrieved:", cognitoId);
-
     if (manager) {
       res.json(manager);
     } else {
