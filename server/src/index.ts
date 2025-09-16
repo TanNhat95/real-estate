@@ -29,6 +29,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
 // Routes
+app.get("/", (req, res) => {
+  res.send("Home route");
+});
+
 app.use("/tenants", authMiddleware(["tenant"]), tenantRoutes);
 app.use("/managers", authMiddleware(["manager"]), managerRoutes);
 app.use("/properties", propertyRoutes);
